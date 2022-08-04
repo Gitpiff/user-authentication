@@ -29,4 +29,40 @@ todoRouter.post("/", (req, res, next) => {
 });
 
 
+//Delete Todo
+todoRouter.delete("/:todoId", (req, res, next) => {
+    Todo.findOneAndDelete(
+        {id: req.params.todoId},
+        (err, deletedTodo) => {
+            if(err) {
+                res.status(500);
+                return next(err);
+            }
+
+            return res.status(200).send(`Successfully deleted todo: ${deletedTodo.title}!`);
+        }
+    )
+});
+
+
+//Update Todo
+todoRouter.put("/:todoId", (req, res, next) => {
+    Todo.findOneAndUpdate(
+        {id: req.params.todoId},
+        req.body,
+        {new: true},
+        (err, updatedTodo) => {
+            if(err) {
+                res.status(500);
+                return err(next);
+            }
+
+            return res.status(201).send.updatedTodo;
+        }
+    )
+});
+
+
+
+
 module.exports = todoRouter;
