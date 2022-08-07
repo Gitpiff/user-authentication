@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 
 //Signup Route -Post-
 authRouter.post("/signup", (req, res, next) => {
-    //check if the user exists
-    User.findOne({username: req.body.username}, (err, user) => {
+    //check if the user exists, add toLowerCase() to avoid case errors
+    User.findOne({username: req.body.username.toLowerCase()}, (err, user) => {
         if(err){
             res.status(500);
             return next(err);
@@ -29,6 +29,32 @@ authRouter.post("/signup", (req, res, next) => {
             //return the newly created token and the savedUser
             return res.status(201).send({token, user: savedUser});
         })
+    })
+});
+
+
+//Login
+authRouter.post("/login", (req, res, next) => {
+    //make sure they exist, add toLowerCase() to avoid case errors
+    User.findOne({username: req.body.username.toLowerCase()}, (err, user) => {
+        if(err){
+            res.status(500);
+            return next(err);
+        }
+        //if the user does not exist
+        if(!user){
+            res.status(403);
+            return next(new Error("Username or password are incorrect"))
+        }
+        //if the password does not match
+        if(req.body.password !== user.password){
+            res.status(403)
+            return next(new Error("Username or password are incorrect"))
+        }
+        //if they exist and password matches, send back the token and user
+        //token takes a payload that it has to be in the form of an object -toObject()-, and a signature -SECRET-
+        const token = jwt.sign(user.toObject(), process.env.SECRET)
+        return res.status(200).send({token, user})
     })
 });
 
