@@ -15,11 +15,11 @@ mongoose.connect(
 );
 
 //"gatekeeper" so we don't display any info if the user is not authenticated, this way the only public page will be the sign in page
-app.use("/api", expressjwt({secret: process.env.SECRET, algorithms: ["HS256"]}))
+app.use("/api", expressjwt({secret: process.env.SECRET, algorithms: ["HS256"]}))    //req.user
 
 app.use("/auth", require("./routes/authRouter"));
 
-app.use("/api//todo", require("./routes/todoRouter"));
+app.use("/api/todo", require("./routes/todoRouter"));
 
 
 //Catch error message

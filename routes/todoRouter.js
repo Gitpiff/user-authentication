@@ -17,6 +17,7 @@ todoRouter.get("/", (req, res, next) => {
 
 //Add new Todo
 todoRouter.post("/", (req, res, next) => {
+    req.body.user = req.user
     const newTodo = new Todo(req.body);
     newTodo.save((err, savedTodo) => {
         if(err) {
@@ -32,7 +33,7 @@ todoRouter.post("/", (req, res, next) => {
 //Delete Todo
 todoRouter.delete("/:todoId", (req, res, next) => {
     Todo.findOneAndDelete(
-        {id: req.params.todoId},
+        {_id: req.params.todoId, user: req.user._id},
         (err, deletedTodo) => {
             if(err) {
                 res.status(500);
@@ -48,7 +49,7 @@ todoRouter.delete("/:todoId", (req, res, next) => {
 //Update Todo
 todoRouter.put("/:todoId", (req, res, next) => {
     Todo.findOneAndUpdate(
-        {id: req.params.todoId},
+        {_id: req.params.todoId, user: req.user._id},
         req.body,
         {new: true},
         (err, updatedTodo) => {
